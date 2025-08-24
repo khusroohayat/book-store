@@ -1,0 +1,6 @@
+.add-book-container { max-width: 500px; margin: 2rem auto; }
+label { display: block; margin-bottom: 0.5rem; }
+input, textarea { width: 100%; margin-bottom: 1rem; }
+.form-actions { margin-top: 1rem; }
+.error { color: red; }
+.success { color: green; }

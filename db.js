@@ -9,7 +9,8 @@ const { MongoClient } = require('mongodb');
 // const connectionString = 'mongodb+srv://<username>:<password>@<cluster-url>/bookstore?retryWrites=true&w=majority';
 
 // Replace this with your *actual* MongoDB connection string
-const connectionString = 'mongodb+srv://khusroohayat:mSwm1PuPoaVv0iY6@cluster0.oghhgi5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Default local connection
+require('dotenv').config();
+const connectionString = process.env.MONGODB_URI; // Now loaded from .env file
 
 let dbConnection; // Variable to store the established connection
 

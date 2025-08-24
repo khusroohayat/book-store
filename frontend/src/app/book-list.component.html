@@ -1,0 +1,39 @@
+<div class="book-list-container">
+  <h2>Book Inventory</h2>
+  <button routerLink="/add">Add Book</button>
+  <table *ngIf="books.length; else noBooks">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genres</th>
+        <th>Pages</th>
+        <th>Rating</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let book of books">
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.genres.join(', ') }}</td>
+        <td>{{ book.pages }}</td>
+        <td>{{ book.rating }}</td>
+        <td>
+          <button (click)="editBook(book)">Edit</button>
+          <button (click)="deleteBook(book)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #noBooks>
+    <p>No books found.</p>
+  </ng-template>
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="page === 1">Previous</button>
+    <span>Page {{ page }}</span>
+    <button (click)="nextPage()" [disabled]="page * limit >= total">Next</button>
+  </div>
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

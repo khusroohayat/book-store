@@ -1,0 +1,17 @@
+<div class="add-book-container">
+  <h2>Add Book</h2>
+  <form (ngSubmit)="addBook()" #bookForm="ngForm">
+    <label>Title: <input name="title" [(ngModel)]="book.title" required /></label><br />
+    <label>Author: <input name="author" [(ngModel)]="book.author" required /></label><br />
+    <label>Genres (comma separated): <input name="genres" [(ngModel)]="genresInput" required /></label><br />
+    <label>Pages: <input name="pages" type="number" [(ngModel)]="book.pages" required /></label><br />
+    <label>Rating: <input name="rating" type="number" [(ngModel)]="book.rating" min="0" max="5" required /></label><br />
+    <label>Reviews (optional, one per line, format: Name: Review): <textarea name="reviews" [(ngModel)]="reviewsInput"></textarea></label>
+    <div class="form-actions">
+      <button type="submit" [disabled]="bookForm.invalid">Add</button>
+      <button type="button" routerLink="/">Cancel</button>
+    </div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="success" class="success">{{ success }}</div>
+  </form>
+</div>
