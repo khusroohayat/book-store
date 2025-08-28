@@ -17,6 +17,7 @@ export class EditBookComponent implements OnInit {
   reviewsInput = '';
   error = '';
   success = '';
+  isSubmitting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +46,13 @@ export class EditBookComponent implements OnInit {
 
   updateBook() {
     if (!this.book || !this.book._id) return;
+    
+    if (this.isSubmitting) return;
+    
+    this.isSubmitting = true;
+    this.error = '';
+    this.success = '';
+    
     this.book.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
     this.book.reviews = this.reviewsInput
       ? this.reviewsInput.split('\n').map(line => {
@@ -55,10 +63,12 @@ export class EditBookComponent implements OnInit {
     this.bookService.updateBook(this.book._id, this.book).subscribe({
       next: () => {
         this.success = 'Book updated!';
+        this.isSubmitting = false;
         setTimeout(() => this.router.navigate(['/']), 1000);
       },
       error: err => {
         this.error = err.error?.error || 'Failed to update book.';
+        this.isSubmitting = false;
       }
     });
   }

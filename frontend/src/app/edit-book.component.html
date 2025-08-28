@@ -1,18 +1,341 @@
-<div class="edit-book-container" *ngIf="book">
-  <h2>Edit Book</h2>
-  <form (ngSubmit)="updateBook()" #bookForm="ngForm">
-    <label>Title: <input name="title" [(ngModel)]="book.title" required /></label><br />
-    <label>Author: <input name="author" [(ngModel)]="book.author" required /></label><br />
-    <label>Genres (comma separated): <input name="genres" [(ngModel)]="genresInput" required /></label><br />
-    <label>Pages: <input name="pages" type="number" [(ngModel)]="book.pages" required /></label><br />
-    <label>Rating: <input name="rating" type="number" [(ngModel)]="book.rating" min="0" max="5" required /></label><br />
-    <label>Reviews (optional, one per line, format: Name: Review): <textarea name="reviews" [(ngModel)]="reviewsInput"></textarea></label>
-    <div class="form-actions">
-      <button type="submit" [disabled]="bookForm.invalid">Update</button>
-      <button type="button" routerLink="/">Cancel</button>
+<div class="edit-book-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="breadcrumb">
+        <a routerLink="/" class="breadcrumb-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9,22 9,12 15,12 15,22"></polyline>
+          </svg>
+          Inventory
+        </a>
+        <svg class="breadcrumb-separator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9,18 15,12 9,6"></polyline>
+        </svg>
+        <span class="breadcrumb-current">Edit Book</span>
+      </div>
+      <h1 class="page-title">Edit Book Details</h1>
+      <p class="page-subtitle" *ngIf="book">Update information for "{{ book.title }}"</p>
     </div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <div *ngIf="success" class="success">{{ success }}</div>
-  </form>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!book && !error" class="loading-container">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading book details...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !book" class="error-container">
+    <div class="error-state">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      </div>
+      <h3>Book Not Found</h3>
+      <p>{{ error }}</p>
+      <a routerLink="/" class="btn btn-primary">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15,18 9,12 15,6"></polyline>
+        </svg>
+        Back to Inventory
+      </a>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div *ngIf="book" class="form-container">
+    <form (ngSubmit)="updateBook()" #bookForm="ngForm" class="book-form">
+      <!-- Form Content -->
+      <div class="form-content">
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+            <div class="section-title">
+              <h3>Basic Information</h3>
+              <p>Update the fundamental details about the book</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="title">
+                <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                Book Title
+                <span class="required">*</span>
+              </label>
+              <input 
+                id="title"
+                name="title" 
+                [(ngModel)]="book.title" 
+                required 
+                class="form-control"
+                placeholder="Enter the complete book title"
+                #titleInput="ngModel">
+              <div *ngIf="titleInput.invalid && titleInput.touched" class="field-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                Book title is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="author">
+                <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Author Name
+                <span class="required">*</span>
+              </label>
+              <input 
+                id="author"
+                name="author" 
+                [(ngModel)]="book.author" 
+                required 
+                class="form-control"
+                placeholder="Enter the author's full name"
+                #authorInput="ngModel">
+              <div *ngIf="authorInput.invalid && authorInput.touched" class="field-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                Author name is required
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="genres">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+              Book Genres
+              <span class="required">*</span>
+            </label>
+            <input 
+              id="genres"
+              name="genres" 
+              [(ngModel)]="genresInput" 
+              required 
+              class="form-control"
+              placeholder="e.g., Fiction, Mystery, Thriller, Romance"
+              #genresInputField="ngModel">
+            <div class="field-help">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              Separate multiple genres with commas (e.g., "Fiction, Mystery, Thriller")
+            </div>
+            <div *ngIf="genresInputField.invalid && genresInputField.touched" class="field-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              At least one genre is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Book Details Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <div class="section-title">
+              <h3>Book Details</h3>
+              <p>Update the book's physical and quality attributes</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="pages">
+                <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14,2 14,8 20,8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10,9 9,9 8,9"></polyline>
+                </svg>
+                Number of Pages
+                <span class="required">*</span>
+              </label>
+              <input 
+                id="pages"
+                name="pages" 
+                type="number" 
+                [(ngModel)]="book.pages" 
+                required 
+                min="1"
+                max="10000"
+                class="form-control"
+                placeholder="e.g., 350"
+                #pagesInput="ngModel">
+              <div *ngIf="pagesInput.invalid && pagesInput.touched" class="field-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                Please enter a valid number of pages (1-10,000)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="rating">
+                <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                </svg>
+                Book Rating
+                <span class="required">*</span>
+              </label>
+              <select 
+                id="rating"
+                name="rating" 
+                [(ngModel)]="book.rating" 
+                required 
+                class="form-control"
+                #ratingInput="ngModel">
+                <option value="">Select a rating</option>
+                <option value="1">⭐ 1 Star - Poor</option>
+                <option value="2">⭐⭐ 2 Stars - Fair</option>
+                <option value="3">⭐⭐⭐ 3 Stars - Good</option>
+                <option value="4">⭐⭐⭐⭐ 4 Stars - Very Good</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 Stars - Excellent</option>
+              </select>
+              <div *ngIf="ratingInput.invalid && ratingInput.touched" class="field-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                Please select a rating for the book
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="section-title">
+              <h3>Customer Reviews</h3>
+              <p>Update existing reviews for this book (optional)</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reviews">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+              </svg>
+              Reviews & Feedback
+            </label>
+            <textarea 
+              id="reviews"
+              name="reviews" 
+              [(ngModel)]="reviewsInput"
+              class="form-control"
+              rows="6"
+              placeholder="Enter reviews in the following format:&#10;&#10;John Doe: This book was absolutely fantastic! The characters were well-developed and the plot kept me engaged throughout.&#10;&#10;Jane Smith: A compelling read with beautiful prose. Highly recommend for anyone who enjoys literary fiction."></textarea>
+            <div class="field-help">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              Format each review as: <strong>Reviewer Name: Review text</strong> (one review per line)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <div class="actions-container">
+          <a routerLink="/" class="btn btn-secondary btn-lg">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+            Cancel
+          </a>
+          <button type="submit" [disabled]="bookForm.invalid || isSubmitting" class="btn btn-primary btn-lg">
+            <span *ngIf="isSubmitting" class="loading-content">
+              <div class="loading-spinner"></div>
+              Updating Book...
+            </span>
+            <span *ngIf="!isSubmitting" class="normal-content">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                <polyline points="7,3 7,8 15,8"></polyline>
+              </svg>
+              Update Book Details
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="error" class="alert alert-error">
+        <div class="alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <div class="alert-content">
+          <strong>Error occurred</strong>
+          <p>{{ error }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="success" class="alert alert-success">
+        <div class="alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"></polyline>
+          </svg>
+        </div>
+        <div class="alert-content">
+          <strong>Success!</strong>
+          <p>{{ success }}</p>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
-<div *ngIf="!book && error" class="error">{{ error }}</div>

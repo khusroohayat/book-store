@@ -18,10 +18,17 @@ export class AddBookComponent {
   reviewsInput = '';
   error = '';
   success = '';
+  isSubmitting = false;
 
   constructor(private bookService: BookService, private router: Router) {}
 
   addBook() {
+    if (this.isSubmitting) return;
+    
+    this.isSubmitting = true;
+    this.error = '';
+    this.success = '';
+    
     this.book.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
     this.book.reviews = this.reviewsInput
       ? this.reviewsInput.split('\n').map(line => {
@@ -32,10 +39,12 @@ export class AddBookComponent {
     this.bookService.addBook(this.book).subscribe({
       next: () => {
         this.success = 'Book added!';
+        this.isSubmitting = false;
         setTimeout(() => this.router.navigate(['/']), 1000);
       },
       error: err => {
         this.error = err.error?.error || 'Failed to add book.';
+        this.isSubmitting = false;
       }
     });
   }

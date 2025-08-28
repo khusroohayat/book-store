@@ -1,135 +1,319 @@
-<div class="book-list-page">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="d-flex align-items-center justify-content-between">
-      <div>
-        <h2 class="page-title">Book Inventory</h2>
-        <p class="page-subtitle text-muted">Manage your book collection</p>
-      </div>
-      <a routerLink="/add" class="btn btn-primary">
-        <span style="margin-right: 0.5rem;">➕</span>
-        Add New Book
-      </a>
-    </div>
-  </div>
-
-  <!-- Stats Cards -->
-  <div class="stats-grid" *ngIf="books.length > 0">
-    <div class="stat-card">
-      <div class="stat-icon">📚</div>
-      <div class="stat-content">
-        <div class="stat-number">{{ total }}</div>
-        <div class="stat-label">Total Books</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">⭐</div>
-      <div class="stat-content">
-        <div class="stat-number">{{ getAverageRating() | number:'1.1-1' }}</div>
-        <div class="stat-label">Avg Rating</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">📄</div>
-      <div class="stat-content">
-        <div class="stat-number">{{ getTotalPages() | number }}</div>
-        <div class="stat-label">Total Pages</div>
+<div class="book-inventory">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">📚 Book Inventory Management</h1>
+      <p class="hero-subtitle">Streamline your book collection with our intuitive management system</p>
+      <div class="hero-actions">
+        <a routerLink="/add" class="btn btn-primary btn-lg">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          Add New Book
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading">
-    Loading your books...
+  <!-- Stats Dashboard -->
+  <div class="stats-section" *ngIf="books.length > 0">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ total }}</div>
+            <div class="stat-label">Total Books</div>
+          </div>
+        </div>
+        
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ getAverageRating() | number:'1.1-1' }}</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+        </div>
+        
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14,2 14,8 20,8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10,9 9,9 8,9"></polyline>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ getTotalPages() | number }}</div>
+            <div class="stat-label">Total Pages</div>
+          </div>
+        </div>
+        
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0a2 2 0 0 0-2-2v-3a2 2 0 0 0 2-2m6 0a2 2 0 0 1 2-2v-3a2 2 0 0 1-2-2"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ getUniqueGenres() }}</div>
+            <div class="stat-label">Unique Genres</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="error && !loading" class="alert alert-error">
-    <strong>Error:</strong> {{ error }}
-  </div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container">
+      <!-- Section Header -->
+      <div class="section-header" *ngIf="books.length > 0">
+        <div class="section-title">
+          <h2>Your Book Collection</h2>
+          <p class="section-subtitle">Manage and organize your inventory</p>
+        </div>
+        <div class="section-actions">
+          <div class="view-toggle">
+            <button 
+              class="toggle-btn" 
+              [class.active]="viewMode === 'grid'"
+              (click)="setViewMode('grid')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button 
+              class="toggle-btn" 
+              [class.active]="viewMode === 'list'"
+              (click)="setViewMode('list')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
 
-  <!-- Books Table -->
-  <div *ngIf="books.length > 0 && !loading" class="table-container">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Book Details</th>
-          <th>Genres</th>
-          <th>Pages</th>
-          <th>Rating</th>
-          <th>Reviews</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let book of books; trackBy: trackByBookId">
-          <td>
-            <div class="book-info">
-              <div class="book-title">{{ book.title }}</div>
-              <div class="book-author text-muted">by {{ book.author }}</div>
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading your book collection...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !loading" class="error-state">
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h3>Something went wrong</h3>
+        <p>{{ error }}</p>
+        <button (click)="fetchBooks()" class="btn btn-primary">Try Again</button>
+      </div>
+
+      <!-- Books Grid View -->
+      <div *ngIf="books.length > 0 && !loading && viewMode === 'grid'" class="books-grid">
+        <div *ngFor="let book of books; trackBy: trackByBookId" class="book-card">
+          <div class="book-card-header">
+            <div class="book-rating">
+              <span class="rating-stars">{{ getStars(book.rating) }}</span>
+              <span class="rating-value">{{ book.rating }}</span>
             </div>
-          </td>
-          <td>
-            <div class="genres">
-              <span *ngFor="let genre of book.genres" class="genre-tag">
+            <div class="book-actions">
+              <button (click)="editBook(book)" class="action-btn edit" title="Edit book">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button (click)="deleteBook(book)" class="action-btn delete" title="Delete book">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div class="book-card-body">
+            <h3 class="book-title">{{ book.title }}</h3>
+            <p class="book-author">by {{ book.author }}</p>
+            
+            <div class="book-genres">
+              <span *ngFor="let genre of book.genres.slice(0, 3)" class="genre-tag">
                 {{ genre }}
               </span>
+              <span *ngIf="book.genres.length > 3" class="genre-more">
+                +{{ book.genres.length - 3 }} more
+              </span>
             </div>
-          </td>
-          <td>
-            <span class="pages-count">{{ book.pages }}</span>
-          </td>
-          <td>
-            <div class="rating">
-              <span class="rating-stars">{{ getStars(book.rating) }}</span>
-              <span class="rating-number">({{ book.rating }})</span>
+            
+            <div class="book-meta">
+              <div class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14,2 14,8 20,8"></polyline>
+                </svg>
+                <span>{{ book.pages }} pages</span>
+              </div>
+              <div class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0a2 2 0 0 0-2-2v-3a2 2 0 0 0 2-2m6 0a2 2 0 0 1 2-2v-3a2 2 0 0 1-2-2"></path>
+                </svg>
+                <span>{{ book.reviews.length }} reviews</span>
+              </div>
             </div>
-          </td>
-          <td>
-            <span class="review-count">{{ book.reviews.length }} review{{ book.reviews.length !== 1 ? 's' : '' }}</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <button (click)="editBook(book)" class="btn btn-secondary btn-sm">
-                ✏️ Edit
-              </button>
-              <button (click)="deleteBook(book)" class="btn btn-danger btn-sm">
-                🗑️ Delete
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          </div>
+        </div>
+      </div>
 
-  <!-- Empty State -->
-  <div *ngIf="books.length === 0 && !loading && !error" class="empty-state">
-    <div class="empty-state-icon">📚</div>
-    <h3>No books in your inventory</h3>
-    <p class="text-muted">Start building your collection by adding your first book.</p>
-    <a routerLink="/add" class="btn btn-primary mt-3">
-      <span style="margin-right: 0.5rem;">➕</span>
-      Add Your First Book
-    </a>
-  </div>
+      <!-- Books List View -->
+      <div *ngIf="books.length > 0 && !loading && viewMode === 'list'" class="books-table-container">
+        <div class="table-wrapper">
+          <table class="books-table">
+            <thead>
+              <tr>
+                <th>Book Details</th>
+                <th>Genres</th>
+                <th>Pages</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let book of books; trackBy: trackByBookId" class="book-row">
+                <td class="book-details">
+                  <div class="book-info">
+                    <h4 class="book-title">{{ book.title }}</h4>
+                    <p class="book-author">by {{ book.author }}</p>
+                  </div>
+                </td>
+                <td class="book-genres">
+                  <div class="genres-list">
+                    <span *ngFor="let genre of book.genres.slice(0, 2)" class="genre-tag">
+                      {{ genre }}
+                    </span>
+                    <span *ngIf="book.genres.length > 2" class="genre-more">
+                      +{{ book.genres.length - 2 }}
+                    </span>
+                  </div>
+                </td>
+                <td class="book-pages">
+                  <span class="pages-count">{{ book.pages }}</span>
+                </td>
+                <td class="book-rating">
+                  <div class="rating-display">
+                    <span class="rating-stars">{{ getStars(book.rating) }}</span>
+                    <span class="rating-value">({{ book.rating }})</span>
+                  </div>
+                </td>
+                <td class="book-reviews">
+                  <span class="review-count">{{ book.reviews.length }}</span>
+                </td>
+                <td class="book-actions">
+                  <div class="action-buttons">
+                    <button (click)="editBook(book)" class="btn btn-sm btn-secondary">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                      Edit
+                    </button>
+                    <button (click)="deleteBook(book)" class="btn btn-sm btn-danger">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-  <!-- Pagination -->
-  <div *ngIf="books.length > 0" class="pagination">
-    <button 
-      (click)="prevPage()" 
-      [disabled]="page === 1" 
-      class="btn btn-secondary">
-      ← Previous
-    </button>
-    <div class="pagination-info">
-      Page {{ page }} of {{ getTotalPages() }} • Showing {{ books.length }} of {{ total }} books
+      <!-- Empty State -->
+      <div *ngIf="books.length === 0 && !loading && !error" class="empty-state">
+        <div class="empty-illustration">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </div>
+        <h3>No books in your collection yet</h3>
+        <p>Start building your digital library by adding your first book to the inventory.</p>
+        <a routerLink="/add" class="btn btn-primary btn-lg">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          Add Your First Book
+        </a>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="books.length > 0 && getTotalPages() > 1" class="pagination-container">
+        <div class="pagination">
+          <button 
+            (click)="prevPage()" 
+            [disabled]="page === 1" 
+            class="pagination-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+            Previous
+          </button>
+          
+          <div class="pagination-info">
+            <span class="current-page">{{ page }}</span>
+            <span class="separator">of</span>
+            <span class="total-pages">{{ getTotalPages() }}</span>
+          </div>
+          
+          <button 
+            (click)="nextPage()" 
+            [disabled]="page * limit >= total" 
+            class="pagination-btn">
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="results-info">
+          Showing {{ (page - 1) * limit + 1 }} to {{ Math.min(page * limit, total) }} of {{ total }} books
+        </div>
+      </div>
     </div>
-    <button 
-      (click)="nextPage()" 
-      [disabled]="page * limit >= total" 
-      class="btn btn-secondary">
-      Next →
-    </button>
   </div>
 </div>

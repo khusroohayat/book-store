@@ -18,6 +18,8 @@ export class BookListComponent implements OnInit {
   limit = 10;
   loading = false;
   error = '';
+  viewMode: 'grid' | 'list' = 'grid';
+  Math = Math;
 
   constructor(private bookService: BookService, private router: Router) {}
 
@@ -103,6 +105,15 @@ export class BookListComponent implements OnInit {
 
   getTotalPages(): number {
     return Math.ceil(this.total / this.limit);
+  }
+
+  getUniqueGenres(): number {
+    const allGenres = this.books.flatMap(book => book.genres);
+    return new Set(allGenres).size;
+  }
+
+  setViewMode(mode: 'grid' | 'list') {
+    this.viewMode = mode;
   }
 
   private showTemporaryMessage(message: string, type: 'success' | 'error') {
