@@ -1,17 +1,161 @@
-<div class="add-book-container">
-  <h2>Add Book</h2>
-  <form (ngSubmit)="addBook()" #bookForm="ngForm">
-    <label>Title: <input name="title" [(ngModel)]="book.title" required /></label><br />
-    <label>Author: <input name="author" [(ngModel)]="book.author" required /></label><br />
-    <label>Genres (comma separated): <input name="genres" [(ngModel)]="genresInput" required /></label><br />
-    <label>Pages: <input name="pages" type="number" [(ngModel)]="book.pages" required /></label><br />
-    <label>Rating: <input name="rating" type="number" [(ngModel)]="book.rating" min="0" max="5" required /></label><br />
-    <label>Reviews (optional, one per line, format: Name: Review): <textarea name="reviews" [(ngModel)]="reviewsInput"></textarea></label>
-    <div class="form-actions">
-      <button type="submit" [disabled]="bookForm.invalid">Add</button>
-      <button type="button" routerLink="/">Cancel</button>
-    </div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <div *ngIf="success" class="success">{{ success }}</div>
-  </form>
+<div class="add-book-page">
+  <div class="page-header">
+    <h2 class="page-title">Add New Book</h2>
+    <p class="page-subtitle text-muted">Add a new book to your inventory</p>
+  </div>
+
+  <div class="form-container">
+    <form (ngSubmit)="addBook()" #bookForm="ngForm" class="book-form">
+      <div class="form-grid">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h3 class="section-title">Basic Information</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="title">
+              Book Title <span class="required">*</span>
+            </label>
+            <input 
+              id="title"
+              name="title" 
+              [(ngModel)]="book.title" 
+              required 
+              class="form-control"
+              placeholder="Enter the book title"
+              #titleInput="ngModel">
+            <div *ngIf="titleInput.invalid && titleInput.touched" class="field-error">
+              Title is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="author">
+              Author <span class="required">*</span>
+            </label>
+            <input 
+              id="author"
+              name="author" 
+              [(ngModel)]="book.author" 
+              required 
+              class="form-control"
+              placeholder="Enter the author's name"
+              #authorInput="ngModel">
+            <div *ngIf="authorInput.invalid && authorInput.touched" class="field-error">
+              Author is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="genres">
+              Genres <span class="required">*</span>
+            </label>
+            <input 
+              id="genres"
+              name="genres" 
+              [(ngModel)]="genresInput" 
+              required 
+              class="form-control"
+              placeholder="e.g., Fiction, Mystery, Thriller"
+              #genresInputField="ngModel">
+            <div class="field-help">Separate multiple genres with commas</div>
+            <div *ngIf="genresInputField.invalid && genresInputField.touched" class="field-error">
+              At least one genre is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="form-section">
+          <h3 class="section-title">Book Details</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="pages">
+                Number of Pages <span class="required">*</span>
+              </label>
+              <input 
+                id="pages"
+                name="pages" 
+                type="number" 
+                [(ngModel)]="book.pages" 
+                required 
+                min="1"
+                class="form-control"
+                placeholder="e.g., 350"
+                #pagesInput="ngModel">
+              <div *ngIf="pagesInput.invalid && pagesInput.touched" class="field-error">
+                Please enter a valid number of pages
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="rating">
+                Rating <span class="required">*</span>
+              </label>
+              <select 
+                id="rating"
+                name="rating" 
+                [(ngModel)]="book.rating" 
+                required 
+                class="form-control"
+                #ratingInput="ngModel">
+                <option value="">Select rating</option>
+                <option value="1">⭐ 1 - Poor</option>
+                <option value="2">⭐⭐ 2 - Fair</option>
+                <option value="3">⭐⭐⭐ 3 - Good</option>
+                <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+              </select>
+              <div *ngIf="ratingInput.invalid && ratingInput.touched" class="field-error">
+                Please select a rating
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="form-section">
+        <h3 class="section-title">Reviews (Optional)</h3>
+        <div class="form-group">
+          <label class="form-label" for="reviews">
+            Customer Reviews
+          </label>
+          <textarea 
+            id="reviews"
+            name="reviews" 
+            [(ngModel)]="reviewsInput"
+            class="form-control"
+            rows="4"
+            placeholder="Enter reviews in the format:&#10;John Doe: Great book, highly recommended!&#10;Jane Smith: Loved the characters and plot."></textarea>
+          <div class="field-help">
+            Format: <strong>Name: Review text</strong> (one review per line)
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="submit" [disabled]="bookForm.invalid || isSubmitting" class="btn btn-primary">
+          <span *ngIf="isSubmitting">Adding Book...</span>
+          <span *ngIf="!isSubmitting">
+            <span style="margin-right: 0.5rem;">📚</span>
+            Add Book
+          </span>
+        </button>
+        <a routerLink="/" class="btn btn-secondary">
+          <span style="margin-right: 0.5rem;">❌</span>
+          Cancel
+        </a>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="error" class="alert alert-error">
+        <strong>Error:</strong> {{ error }}
+      </div>
+      <div *ngIf="success" class="alert alert-success">
+        <strong>Success:</strong> {{ success }}
+      </div>
+    </form>
+  </div>
 </div>

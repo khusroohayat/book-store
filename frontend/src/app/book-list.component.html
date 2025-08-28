@@ -1,39 +1,135 @@
-<div class="book-list-container">
-  <h2>Book Inventory</h2>
-  <button routerLink="/add">Add Book</button>
-  <table *ngIf="books.length; else noBooks">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Genres</th>
-        <th>Pages</th>
-        <th>Rating</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let book of books">
-        <td>{{ book.title }}</td>
-        <td>{{ book.author }}</td>
-        <td>{{ book.genres.join(', ') }}</td>
-        <td>{{ book.pages }}</td>
-        <td>{{ book.rating }}</td>
-        <td>
-          <button (click)="editBook(book)">Edit</button>
-          <button (click)="deleteBook(book)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <ng-template #noBooks>
-    <p>No books found.</p>
-  </ng-template>
-  <div class="pagination">
-    <button (click)="prevPage()" [disabled]="page === 1">Previous</button>
-    <span>Page {{ page }}</span>
-    <button (click)="nextPage()" [disabled]="page * limit >= total">Next</button>
+<div class="book-list-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <h2 class="page-title">Book Inventory</h2>
+        <p class="page-subtitle text-muted">Manage your book collection</p>
+      </div>
+      <a routerLink="/add" class="btn btn-primary">
+        <span style="margin-right: 0.5rem;">➕</span>
+        Add New Book
+      </a>
+    </div>
   </div>
-  <div *ngIf="loading">Loading...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid" *ngIf="books.length > 0">
+    <div class="stat-card">
+      <div class="stat-icon">📚</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ total }}</div>
+        <div class="stat-label">Total Books</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ getAverageRating() | number:'1.1-1' }}</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📄</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ getTotalPages() | number }}</div>
+        <div class="stat-label">Total Pages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    Loading your books...
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-error">
+    <strong>Error:</strong> {{ error }}
+  </div>
+
+  <!-- Books Table -->
+  <div *ngIf="books.length > 0 && !loading" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Book Details</th>
+          <th>Genres</th>
+          <th>Pages</th>
+          <th>Rating</th>
+          <th>Reviews</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let book of books; trackBy: trackByBookId">
+          <td>
+            <div class="book-info">
+              <div class="book-title">{{ book.title }}</div>
+              <div class="book-author text-muted">by {{ book.author }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="genres">
+              <span *ngFor="let genre of book.genres" class="genre-tag">
+                {{ genre }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="pages-count">{{ book.pages }}</span>
+          </td>
+          <td>
+            <div class="rating">
+              <span class="rating-stars">{{ getStars(book.rating) }}</span>
+              <span class="rating-number">({{ book.rating }})</span>
+            </div>
+          </td>
+          <td>
+            <span class="review-count">{{ book.reviews.length }} review{{ book.reviews.length !== 1 ? 's' : '' }}</span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button (click)="editBook(book)" class="btn btn-secondary btn-sm">
+                ✏️ Edit
+              </button>
+              <button (click)="deleteBook(book)" class="btn btn-danger btn-sm">
+                🗑️ Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="books.length === 0 && !loading && !error" class="empty-state">
+    <div class="empty-state-icon">📚</div>
+    <h3>No books in your inventory</h3>
+    <p class="text-muted">Start building your collection by adding your first book.</p>
+    <a routerLink="/add" class="btn btn-primary mt-3">
+      <span style="margin-right: 0.5rem;">➕</span>
+      Add Your First Book
+    </a>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="books.length > 0" class="pagination">
+    <button 
+      (click)="prevPage()" 
+      [disabled]="page === 1" 
+      class="btn btn-secondary">
+      ← Previous
+    </button>
+    <div class="pagination-info">
+      Page {{ page }} of {{ getTotalPages() }} • Showing {{ books.length }} of {{ total }} books
+    </div>
+    <button 
+      (click)="nextPage()" 
+      [disabled]="page * limit >= total" 
+      class="btn btn-secondary">
+      Next →
+    </button>
+  </div>
 </div>

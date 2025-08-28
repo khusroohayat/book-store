@@ -1,19 +1,37 @@
-
-<header style="background: #f8f9fa; border-bottom: 1px solid #e0e0e0; padding: 1.5rem 0 1rem 0; text-align: center;">
-  <h1 style="font-size: 2.2rem; font-weight: 600; color: #333; margin: 0; letter-spacing: 1px;">Book Store</h1>
-  <nav style="margin-top: 1rem;">
-    <a [routerLink]="['/']" routerLinkActive="active" style="margin: 0 1.5rem; color: #555; text-decoration: none; font-size: 1.1rem;">Home</a>
-    <a [routerLink]="['/add']" routerLinkActive="active" style="margin: 0 1.5rem; color: #555; text-decoration: none; font-size: 1.1rem;">Add Book</a>
-  </nav>
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="brand">
+        <h1 class="brand-title">📚 Book Store</h1>
+        <p class="brand-subtitle">Manage your inventory with ease</p>
+      </div>
+      <nav class="nav">
+        <a [routerLink]="['/']" routerLinkActive="nav-link-active" class="nav-link">
+          <span class="nav-icon">📖</span>
+          Inventory
+        </a>
+        <a [routerLink]="['/add']" routerLinkActive="nav-link-active" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Add Book
+        </a>
+      </nav>
+    </div>
+  </div>
 </header>
-<main style="max-width: 950px; margin: 2rem auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 2rem 2.5rem; min-height: 60vh;">
-  <router-outlet></router-outlet>
+
+<!-- Main Content -->
+<main class="main">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
 </main>
-<style>
-  a.active {
-    color: #1976d2 !important;
-    font-weight: bold;
-    border-bottom: 2px solid #1976d2;
-    padding-bottom: 2px;
-  }
-</style>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <p>&copy; 2025 Book Store Management. Built with Angular & Express.</p>
+    </div>
+  </div>
+</footer>
