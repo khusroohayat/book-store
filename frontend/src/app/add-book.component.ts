@@ -40,7 +40,7 @@ export class AddBookComponent {
       next: () => {
         this.success = 'Book added!';
         this.isSubmitting = false;
-        setTimeout(() => this.router.navigate(['/']), 1000);
+        setTimeout(() => this.router.navigate(['/books']), 1000);
       },
       error: err => {
         this.error = err.error?.error || 'Failed to add book.';

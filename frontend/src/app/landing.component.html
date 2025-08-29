@@ -1,0 +1,257 @@
+<!-- Landing Page -->
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-background">
+      <div class="hero-pattern"></div>
+      <div class="floating-books">
+        <div class="floating-book book-1">📚</div>
+        <div class="floating-book book-2">📖</div>
+        <div class="floating-book book-3">📕</div>
+        <div class="floating-book book-4">📘</div>
+        <div class="floating-book book-5">📗</div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+          </svg>
+          <span>Professional Inventory Management</span>
+        </div>
+        
+        <h1 class="hero-title">
+          Transform Your
+          <span class="gradient-text">Book Collection</span>
+          Management
+        </h1>
+        
+        <p class="hero-description">
+          Experience the future of book inventory management with our comprehensive platform. 
+          From simple cataloging to advanced e-commerce features, we've got everything you need 
+          to streamline your book business.
+        </p>
+        
+        <div class="hero-actions">
+          <a routerLink="/books" class="btn btn-primary btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9,22 9,12 15,12 15,22"></polyline>
+            </svg>
+            Access Inventory
+          </a>
+          <button (click)="scrollToFeatures()" class="btn btn-secondary btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Learn More
+          </button>
+        </div>
+        
+        <div class="hero-stats">
+          <div class="stat-item" *ngFor="let stat of stats">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [innerHTML]="getIconSvg(stat.icon)"></svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">{{ stat.number }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+          </svg>
+          <span>Powerful Features</span>
+        </div>
+        <h2 class="section-title">Everything You Need to Manage Your Books</h2>
+        <p class="section-description">
+          Our comprehensive platform provides all the tools necessary for professional book inventory management, 
+          from basic cataloging to advanced e-commerce capabilities.
+        </p>
+      </div>
+      
+      <div class="features-grid">
+        <div *ngFor="let feature of features; let i = index" 
+             class="feature-card" 
+             [class]="'feature-' + feature.color"
+             [style.animation-delay]="(i * 0.1) + 's'">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [innerHTML]="getIconSvg(feature.icon)"></svg>
+          </div>
+          <div class="feature-content">
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+          </div>
+          <div class="feature-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7,7 17,7 17,17"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Simple Process</span>
+        </div>
+        <h2 class="section-title">How BookStore Pro Works</h2>
+        <p class="section-description">
+          Get started with your book inventory management in just three simple steps.
+        </p>
+      </div>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Add Your Books</h3>
+            <p>Upload book details, covers, and organize your collection with our intuitive interface.</p>
+          </div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Organize & Search</h3>
+            <p>Use powerful search and filtering tools to find any book instantly in your collection.</p>
+          </div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </div>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Manage & Sell</h3>
+            <p>Track inventory, manage reviews, and process orders with integrated e-commerce features.</p>
+          </div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Customer Stories</span>
+        </div>
+        <h2 class="section-title">Loved by Book Professionals Worldwide</h2>
+        <p class="section-description">
+          See how BookStore Pro is helping bookstore owners, librarians, and collectors 
+          streamline their inventory management.
+        </p>
+      </div>
+      
+      <div class="testimonials-grid">
+        <div *ngFor="let testimonial of testimonials; let i = index" 
+             class="testimonial-card"
+             [style.animation-delay]="(i * 0.2) + 's'">
+          <div class="testimonial-content">
+            <div class="quote-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+              </svg>
+            </div>
+            <p class="testimonial-text">{{ testimonial.content }}</p>
+          </div>
+          <div class="testimonial-author">
+            <img [src]="testimonial.avatar" [alt]="testimonial.name" class="author-avatar">
+            <div class="author-info">
+              <h4 class="author-name">{{ testimonial.name }}</h4>
+              <p class="author-role">{{ testimonial.role }}</p>
+            </div>
+            <div class="rating-stars">
+              ⭐⭐⭐⭐⭐
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <div class="cta-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </div>
+        <h2 class="cta-title">Ready to Revolutionize Your Book Management?</h2>
+        <p class="cta-description">
+          Join thousands of satisfied users who have transformed their book inventory management 
+          with BookStore Pro. Start organizing your collection today.
+        </p>
+        <div class="cta-actions">
+          <a routerLink="/books" class="btn btn-primary btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-6-4l4-4-4-4m-8 8h16"></path>
+            </svg>
+            Get Started Now
+          </a>
+          <a routerLink="/add" class="btn btn-outline btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            Add Your First Book
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

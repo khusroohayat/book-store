@@ -37,7 +37,7 @@ export class EditBookComponent implements OnInit {
             rating: b.rating ?? undefined
           };
           this.genresInput = b.genres.join(', ');
-          this.reviewsInput = b.reviews.map(r => `${r.name}: ${r.body}`).join('\n');
+          setTimeout(() => this.router.navigate(['/books']), 1000);
         },
         error: err => this.error = err.error?.error || 'Book not found.'
       });
