@@ -37,7 +37,9 @@ export class EditBookComponent implements OnInit {
             rating: b.rating ?? undefined
           };
           this.genresInput = b.genres.join(', ');
-          setTimeout(() => this.router.navigate(['/books']), 1000);
+          this.reviewsInput = Array.isArray(b.reviews)
+            ? b.reviews.map(r => `${r.name}: ${r.body}`).join('\n')
+            : '';
         },
         error: err => this.error = err.error?.error || 'Book not found.'
       });
@@ -60,11 +62,16 @@ export class EditBookComponent implements OnInit {
           return { name: name.trim(), body: body.join(':').trim() };
         }).filter(r => r.name && r.body)
       : [];
+    if (!this.book.reviews.length) {
+      this.error = 'At least one review is required.';
+      this.isSubmitting = false;
+      return;
+    }
     this.bookService.updateBook(this.book._id, this.book).subscribe({
       next: () => {
         this.success = 'Book updated!';
         this.isSubmitting = false;
-        setTimeout(() => this.router.navigate(['/']), 1000);
+        setTimeout(() => this.router.navigate(['/books']), 1000);
       },
       error: err => {
         this.error = err.error?.error || 'Failed to update book.';

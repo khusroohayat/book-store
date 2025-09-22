@@ -24,11 +24,9 @@ export class AddBookComponent {
 
   addBook() {
     if (this.isSubmitting) return;
-    
     this.isSubmitting = true;
     this.error = '';
     this.success = '';
-    
     this.book.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
     this.book.reviews = this.reviewsInput
       ? this.reviewsInput.split('\n').map(line => {
@@ -36,6 +34,11 @@ export class AddBookComponent {
           return { name: name.trim(), body: body.join(':').trim() };
         }).filter(r => r.name && r.body)
       : [];
+    if (!this.book.reviews.length) {
+      this.error = 'At least one review is required.';
+      this.isSubmitting = false;
+      return;
+    }
     this.bookService.addBook(this.book).subscribe({
       next: () => {
         this.success = 'Book added!';
