@@ -1,10 +1,74 @@
 require('dotenv').config();
 const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const Book = require('./models/Book');
+const User = require('./models/User');
+const jwt = require('jsonwebtoken');
 
-const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Auth middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  jwt.verify(token, process.env.JWT_SECRET || 'secret', (err, user) => {
+    if (err) return res.status(403).json({ error: 'Forbidden' });
+    req.user = user;
+    next();
+  });
+}
+// POST /api/register - Register new user
+app.post('/api/register', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required.' });
+    }
+    const existing = await User.findOne({ username });
+    if (existing) {
+      return res.status(409).json({ error: 'Username already exists.' });
+    }
+    const user = new User({ username, password });
+    await user.save();
+    res.status(201).json({ message: 'User registered.' });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Server error.', details: err.message });
+  }
+});
+
+// POST /api/login - Login user
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required.' });
+    }
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
+    const match = await user.comparePassword(password);
+    if (!match) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error.' });
+  }
+});
+
+// POST /api/logout - Dummy endpoint (client should delete token)
+app.post('/api/logout', (req, res) => {
+  res.json({ message: 'Logged out.' });
+});
+
+
 app.use(cors());
 app.use(express.json());
 
@@ -12,8 +76,8 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI).then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// POST /api/books - Add a new book
-app.post('/api/books', async (req, res) => {
+// POST /api/books - Add a new book (protected)
+app.post('/api/books', authenticateToken, async (req, res) => {
   try {
     const { title, author, genres, pages, rating, reviews } = req.body;
     if (!title || !author || !genres || !pages || !rating || !reviews) {
@@ -28,8 +92,8 @@ app.post('/api/books', async (req, res) => {
   }
 });
 
-// GET /api/books - List all books (with pagination)
-app.get('/api/books', async (req, res) => {
+// GET /api/books - List all books (protected, with pagination)
+app.get('/api/books', authenticateToken, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -42,8 +106,8 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
-// GET /api/books/:id - Get single book
-app.get('/api/books/:id', async (req, res) => {
+// GET /api/books/:id - Get single book (protected)
+app.get('/api/books/:id', authenticateToken, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ error: 'Book not found.' });
@@ -53,8 +117,8 @@ app.get('/api/books/:id', async (req, res) => {
   }
 });
 
-// PUT /api/books/:id - Update a book
-app.put('/api/books/:id', async (req, res) => {
+// PUT /api/books/:id - Update a book (protected)
+app.put('/api/books/:id', authenticateToken, async (req, res) => {
   try {
     // Allow updating any field in the Book model
     const updateFields = {};
@@ -77,8 +141,8 @@ app.put('/api/books/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/books/:id - Delete a book
-app.delete('/api/books/:id', async (req, res) => {
+// DELETE /api/books/:id - Delete a book (protected)
+app.delete('/api/books/:id', authenticateToken, async (req, res) => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
     if (!book) return res.status(404).json({ error: 'Book not found.' });

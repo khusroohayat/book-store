@@ -15,6 +15,8 @@ export const routes: Routes = [
 			{ path: 'books', loadComponent: () => import('./book-list.component').then(m => m.BookListComponent) },
 			{ path: 'add', loadComponent: () => import('./add-book.component').then(m => m.AddBookComponent) },
 			{ path: 'edit/:id', loadComponent: () => import('./edit-book.component').then(m => m.EditBookComponent) },
+			{ path: 'login', loadComponent: () => import('./login.component').then(m => m.LoginComponent) },
+			{ path: 'register', loadComponent: () => import('./register.component').then(m => m.RegisterComponent) },
 		]
 	},
 	{ path: '**', redirectTo: '' }
