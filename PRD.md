@@ -8,7 +8,7 @@
 
 This document outlines the requirements for the Minimum Viable Product (MVP) of the Book Store Web App. This application will provide a simple, clean, and efficient interface for managing a book inventory. It will be built on the MEAN (MongoDB, Express.js, Angular, Node.js) stack, featuring a robust backend API and a functional frontend.
 
-The vision for this MVP is to deliver a foundational, single-user inventory management tool. It will replace the need for cumbersome spreadsheets or manual tracking by providing core CRUD (Create, Read, Update, Delete) functionality for a book collection in a streamlined web-based experience.
+The vision for this MVP is to deliver a foundational inventory management tool with user authentication and authorization. It will replace the need for cumbersome spreadsheets or manual tracking by providing core CRUD (Create, Read, Update, Delete) functionality for a book collection in a streamlined web-based experience. The app now supports multiple users, each with their own secure account and access to their personal inventory.
 
 ### 2. The Problem
 
@@ -18,19 +18,23 @@ This project solves the problem by providing a dedicated web application for sim
 
 ### 3. Target Audience
 
-For the MVP, we are focusing on a single primary user persona:
+For the MVP, we are focusing on the following primary user personas:
 
 *   **The Store Manager / Collector:**
     *   **Profile:** An individual responsible for maintaining and managing a collection of books. They need a simple tool to add new books, update existing entries, view their collection, and remove books that are no longer available.
     *   **Needs:** A fast, intuitive interface that allows them to perform all core inventory tasks without a steep learning curve or unnecessary complexity.
+*   **Authenticated Users:**
+    *   **Profile:** Any user who registers and logs in to the system. Each user has secure access to their own book inventory and data.
+    *   **Needs:** Secure authentication, privacy of data, and personalized access to inventory management features.
 
 ### 4. Goals & Success Metrics (MVP)
 
 **Goals:**
 
 1.  **Deliver Core CRUD Functionality:** Successfully implement all features required to create, read, update, and delete books in the inventory.
-2.  **Provide a Functional User Interface:** Build a clean and responsive web front-end that allows a user to easily interact with the backend API.
-3.  **Ensure API Robustness:** The backend API must be stable, handle errors gracefully, and provide clear validation feedback.
+2.  **Implement User Authentication & Authorization:** Provide secure registration, login, and session management so users can access their own inventory.
+3.  **Provide a Functional User Interface:** Build a clean and responsive web front-end that allows a user to easily interact with the backend API.
+4.  **Ensure API Robustness:** The backend API must be stable, handle errors gracefully, and provide clear validation feedback.
 
 **Success Metrics:**
 
@@ -41,6 +45,17 @@ For the MVP, we are focusing on a single primary user persona:
 ### 5. User Stories & Functional Requirements
 
 This section details the features for both the backend API and the frontend Web App.
+
+
+#### 5.0. Authentication & Authorization
+
+*   **AS A USER, I need to register and log in, SO THAT my inventory is private and secure.**
+    *   **Requirement ID:** AUTH001
+    *   **Acceptance Criteria:**
+        *   Registration endpoint accepts username/email and password, creates a new user, and returns a success message.
+        *   Login endpoint verifies credentials and returns a JWT token for session management.
+        *   All book management endpoints require authentication (JWT in header).
+        *   Each user's books are private and not accessible to other users.
 
 #### 5.1. Backend API (Express.js / Node.js)
 
@@ -125,7 +140,6 @@ This section details the features for both the backend API and the frontend Web 
 ### 8. Out of Scope (MVP)
 
 To ensure a focused and timely delivery of the MVP, the following features are explicitly **out of scope**:
-*   User authentication and authorization (the app will be a single-user system).
 *   Search and filtering functionality.
 *   Uploading book cover images.
 *   E-commerce features (e.g., shopping cart, pricing, orders).

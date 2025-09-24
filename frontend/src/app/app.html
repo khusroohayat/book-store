@@ -24,20 +24,41 @@
           </svg>
           Home
         </a>
-        <a [routerLink]="['/books']" routerLinkActive="nav-link-active" class="nav-link">
+        <a [routerLink]="['/books']" routerLinkActive="nav-link-active" class="nav-link" *ngIf="auth.hasToken()">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
           Inventory
         </a>
-        <a [routerLink]="['/add']" routerLinkActive="nav-link-active" class="nav-link">
+        <a [routerLink]="['/add']" routerLinkActive="nav-link-active" class="nav-link" *ngIf="auth.hasToken()">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="16"></line>
             <line x1="8" y1="12" x2="16" y2="12"></line>
           </svg>
           Add Book
+        </a>
+        <a [routerLink]="['/login']" routerLinkActive="nav-link-active" class="nav-link" *ngIf="!auth.hasToken()">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10,17 15,12 10,7"></polyline>
+          </svg>
+          Login
+        </a>
+        <a [routerLink]="['/register']" routerLinkActive="nav-link-active" class="nav-link" *ngIf="!auth.hasToken()">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M6 20v-2a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v2"></path>
+          </svg>
+          Register
+        </a>
+        <a href="#" (click)="logout()" class="nav-link" *ngIf="auth.hasToken()">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16,17 21,12 16,7"></polyline>
+          </svg>
+          Logout
         </a>
       </nav>
     </div>
