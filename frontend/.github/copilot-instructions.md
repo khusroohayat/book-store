@@ -1,47 +1,71 @@
-You are an expert in TypeScript, Angular, and scalable web application development. You write maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
-## TypeScript Best Practices
+# Book Store AI Coding Agent Instructions
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
+This project is a full-stack book management app with a Node.js/Express backend (see `app.js`, `db.js`, `models/`) and an Angular 20+ frontend (`frontend/`). The following conventions, workflows, and patterns are critical for AI agents to be productive and consistent in this codebase.
 
-## Angular Best Practices
+## Architecture & Data Flow
+- **Backend**: REST API using Express, MongoDB via Mongoose, JWT authentication. Entrypoints: `app.js`, `db.js`, `models/Book.js`, `models/User.js`.
+- **Frontend**: Angular 20+ app in `frontend/` using standalone components, signals for state, and Angular Router for navigation. API calls proxied via `frontend/proxy.conf.json`.
+- **Data Flow**: Frontend communicates with backend via REST endpoints (see `book.service.ts`, `auth.service.ts`).
 
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
+## Developer Workflows
+- **Start backend**: `node app.js` (from repo root)
+- **Start frontend**: `npm start` (from `frontend/`)
+- **API proxy**: Frontend dev server proxies `/api` to backend (see `proxy.conf.json`)
+- **Testing**: Frontend uses Angular/Karma/Jasmine (`ng test` in `frontend/`). Backend: no tests by default.
+- **Debugging**: Use `get_errors` tool for error reporting. Add print/log statements as needed. Make small, incremental changes and validate after each.
 
-## Components
+## Project-Specific Conventions
+- **Angular**:
+  - Use standalone components (do not set `standalone: true` explicitly)
+  - Use signals for state, `computed()` for derived state
+  - Prefer `input()`/`output()` functions over decorators
+  - Use `host` object for bindings, not `@HostBinding`/`@HostListener`
+  - Use `NgOptimizedImage` for static images (not for base64)
+  - Prefer inline templates for small components
+  - Use `ChangeDetectionStrategy.OnPush`
+  - Prefer reactive forms
+  - Use `class`/`style` bindings, not `ngClass`/`ngStyle`
+- **Services**: Single responsibility, `providedIn: 'root'`, use `inject()`
+- **TypeScript**: Strict type checking, avoid `any`, prefer `unknown` if needed
 
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
+## Integration Points
+- **Backend/Frontend**: All data exchange via REST endpoints. See `book.service.ts` and `auth.service.ts` for API usage patterns.
+- **Authentication**: JWT-based, tokens stored in frontend (see `auth.service.ts`).
+- **Models**: Book and User schemas in `models/` directory.
 
-## State Management
+## File/Directory References
+- `app.js`, `db.js`: Backend entrypoints
+- `models/Book.js`, `models/User.js`: Mongoose models
+- `frontend/src/app/`: Angular components and services
+- `frontend/proxy.conf.json`: API proxy config
+- `frontend/.github/copilot-instructions.md`: Full coding standards
 
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
+## Example Patterns
+- **Standalone Angular Component**:
+  ```ts
+  @Component({
+    selector: 'app-example',
+    standalone: true,
+    template: `<div>Example</div>`
+  })
+  export class ExampleComponent {}
+  ```
+- **Service with inject()**:
+  ```ts
+  @Injectable({ providedIn: 'root' })
+  export class BookService {
+    private http = inject(HttpClient);
+    // ...
+  }
+  ```
 
-## Templates
+## AI Agent Workflow (from `.github/chatmodes/beast-mode.chatmode.md`)
+- Always read relevant file contents before editing
+- Make small, testable, incremental changes
+- Use `get_errors` for diagnostics
+- Debug deeply, validate root cause, and iterate until all tests pass
+- Use markdown todo lists to track progress
 
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-
-## Services
-
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
+---
+For further details, see `README.md` and `.github/chatmodes/beast-mode.chatmode.md`.
