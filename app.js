@@ -72,9 +72,14 @@ app.post('/api/logout', (req, res) => {
 app.use(cors());
 app.use(express.json());
 
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI).then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
+
+// Serve static files from Angular build
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 // POST /api/books - Add a new book (protected)
 app.post('/api/books', authenticateToken, async (req, res) => {
@@ -157,7 +162,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-
+// SPA fallback: serve index.html for any unknown non-API route (must be last)
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
