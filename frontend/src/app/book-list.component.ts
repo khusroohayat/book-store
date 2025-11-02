@@ -112,6 +112,10 @@ export class BookListComponent implements OnInit {
     return new Set(allGenres).size;
   }
 
+  getTotalPages(): number {
+    return this.books.reduce((total, book) => total + (book.pages || 0), 0);
+  }
+
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;
   }
