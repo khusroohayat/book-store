@@ -77,7 +77,12 @@ export class BookListComponent implements OnInit {
           }, 100);
         },
         error: err => {
-          this.error = err.error?.error || 'Failed to delete book.';
+          if (err.status === 403) {
+            this.error = 'You are not authorized to delete this book.';
+            this.showTemporaryMessage('You are not authorized to delete this book.', 'error');
+          } else {
+            this.error = err.error?.error || 'Failed to delete book.';
+          }
         }
       });
     }
@@ -110,6 +115,10 @@ export class BookListComponent implements OnInit {
   getUniqueGenres(): number {
     const allGenres = this.books.flatMap(book => book.genres);
     return new Set(allGenres).size;
+  }
+
+  getTotalPagesCount(): number {
+    return this.books.reduce((total, book) => total + (book.pages || 0), 0);
   }
 
   setViewMode(mode: 'grid' | 'list') {

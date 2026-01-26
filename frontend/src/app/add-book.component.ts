@@ -46,7 +46,11 @@ export class AddBookComponent {
         setTimeout(() => this.router.navigate(['/books']), 1000);
       },
       error: err => {
-        this.error = err.error?.error || 'Failed to add book.';
+        if (err.status === 403) {
+          this.error = 'You are not authorized to add a book.';
+        } else {
+          this.error = err.error?.error || 'Failed to add book.';
+        }
         this.isSubmitting = false;
       }
     });

@@ -88,7 +88,15 @@ app.post('/api/books', authenticateToken, async (req, res) => {
     if (!title || !author || !genres || !pages || !rating || !reviews) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
-    const book = new Book({ title, author, genres, pages, rating, reviews });
+    const book = new Book({
+      title,
+      author,
+      genres,
+      pages,
+      rating,
+      reviews,
+      userId: req.user.id
+    });
     await book.save();
     res.status(201).json(book);
   } catch (err) {
@@ -103,8 +111,9 @@ app.get('/api/books', authenticateToken, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const books = await Book.find().skip(skip).limit(limit);
-    const total = await Book.countDocuments();
+    const userId = req.user.id;
+    const books = await Book.find({ userId }).skip(skip).limit(limit);
+    const total = await Book.countDocuments({ userId });
     res.status(200).json({ books, total, page, limit });
   } catch (err) {
     res.status(500).json({ error: 'Server error.' });
@@ -116,6 +125,9 @@ app.get('/api/books/:id', authenticateToken, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ error: 'Book not found.' });
+    if (book.userId.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to this book.' });
+    }
     res.status(200).json(book);
   } catch (err) {
     res.status(404).json({ error: 'Book not found.' });
@@ -125,6 +137,11 @@ app.get('/api/books/:id', authenticateToken, async (req, res) => {
 // PUT /api/books/:id - Update a book (protected)
 app.put('/api/books/:id', authenticateToken, async (req, res) => {
   try {
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ error: 'Book not found.' });
+    if (book.userId.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to update this book.' });
+    }
     // Allow updating any field in the Book model
     const updateFields = {};
     const allowedFields = ['title', 'author', 'genres', 'pages', 'rating', 'reviews'];
@@ -133,12 +150,8 @@ app.put('/api/books/:id', authenticateToken, async (req, res) => {
         updateFields[field] = req.body[field];
       }
     }
-    const book = await Book.findByIdAndUpdate(
-      req.params.id,
-      updateFields,
-      { new: true, runValidators: true }
-    );
-    if (!book) return res.status(404).json({ error: 'Book not found.' });
+    Object.assign(book, updateFields);
+    await book.save();
     res.status(200).json(book);
   } catch (err) {
     console.error('Error updating book:', err);
@@ -149,8 +162,12 @@ app.put('/api/books/:id', authenticateToken, async (req, res) => {
 // DELETE /api/books/:id - Delete a book (protected)
 app.delete('/api/books/:id', authenticateToken, async (req, res) => {
   try {
-    const book = await Book.findByIdAndDelete(req.params.id);
+    const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ error: 'Book not found.' });
+    if (book.userId.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to delete this book.' });
+    }
+    await book.deleteOne();
     res.status(204).send();
   } catch (err) {
     res.status(404).json({ error: 'Book not found.' });
@@ -168,6 +185,11 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

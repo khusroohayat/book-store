@@ -57,7 +57,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ getTotalPages() | number }}</div>
+            <div class="stat-number">{{ getTotalPagesCount() | number }}</div>
             <div class="stat-label">Total Pages</div>
           </div>
         </div>
@@ -65,15 +65,17 @@
         <div class="stat-card warning">
           <div class="stat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0a2 2 0 0 0-2-2v-3a2 2 0 0 0 2-2m6 0a2 2 0 0 1 2-2v-3a2 2 0 0 1-2-2"></path>
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
             </svg>
           </div>
           <div class="stat-content">
             <div class="stat-number">{{ getUniqueGenres() }}</div>
             <div class="stat-label">Unique Genres</div>
-                </div> <!-- .stats-grid -->
-              </div> <!-- .container -->
-            </div> <!-- .stats-section -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Main Content -->
