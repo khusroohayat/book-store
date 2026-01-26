@@ -26,5 +26,8 @@
     "zone.js": "^0.15.1"
   },
   "keywords": [],
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "supertest": "^7.2.2"
+  }
 }

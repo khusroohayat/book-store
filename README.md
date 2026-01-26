@@ -114,13 +114,41 @@ See [`frontend/.github/copilot-instructions.md`](frontend/.github/copilot-instru
 
 ---
 
+
 ## Testing
 
-- **Frontend:**
-  - Unit tests: `ng test` (Karma/Jasmine)
-  - End-to-end: `ng e2e` (choose your preferred e2e framework)
-- **Backend:**
-  - No automated tests included by default. Consider adding Jest or Mocha/Chai for API tests and supertest for endpoint testing.
+### Frontend (Angular)
+- **Unit tests:**
+  1. Open a terminal and navigate to the `frontend/` directory:
+    ```bash
+    cd frontend
+    ```
+  2. Install dependencies (if not already done):
+    ```bash
+    npm install
+    ```
+  3. Run all unit tests:
+    ```bash
+    npx ng test --watch=false
+    ```
+  - Uses Karma/Jasmine. All tests should pass with 0 failures.
+
+### Backend (Node/Express)
+- **API/ownership tests:**
+  1. From the project root, ensure MongoDB is running (see setup instructions).
+  2. Install backend dependencies (if not already done):
+    ```bash
+    npm install
+    ```
+  3. Run backend tests:
+    ```bash
+    npx jest test/book-ownership.test.js
+    ```
+  - Uses Jest and supertest. All tests should pass with 0 failures.
+
+> **Note:**
+> - Backend tests require MongoDB authentication if using Docker Compose (see `mongodb.yaml`).
+> - You can add more backend tests in the `test/` directory as needed.
 
 ---
 

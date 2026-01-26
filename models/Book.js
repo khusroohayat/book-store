@@ -11,7 +11,8 @@ const bookSchema = new mongoose.Schema({
   genres: { type: [String], required: true },
   pages: { type: Number, required: true },
   rating: { type: Number, required: true },
-  reviews: { type: [reviewSchema], required: true }
+  reviews: { type: [reviewSchema], required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Book', bookSchema);
