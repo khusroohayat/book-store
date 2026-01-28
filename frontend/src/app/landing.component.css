@@ -13,6 +13,7 @@
   overflow: hidden;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   animation: gradientShift 8s ease-in-out infinite;
+  padding-top: 3rem; /* Added for improved spacing from top */
 }
 
 @keyframes gradientShift {
