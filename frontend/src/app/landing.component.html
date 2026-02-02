@@ -54,7 +54,7 @@
         
         <div class="hero-stats">
           <div class="stat-item" *ngFor="let stat of stats">
-            <div class="stat-icon">
+            <div class="stat-icon" [attr.aria-label]="stat.label + ' icon'" role="img">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [innerHTML]="getIconSvg(stat.icon)"></svg>
             </div>
             <div class="stat-content">

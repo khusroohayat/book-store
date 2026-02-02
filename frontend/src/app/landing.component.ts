@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +11,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent {
+  constructor(private sanitizer: DomSanitizer) {}
   features = [
     {
       icon: 'user-check',
@@ -81,7 +83,7 @@ export class LandingComponent {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  getIconSvg(iconName: string): string {
+  getIconSvg(iconName: string): SafeHtml {
     const icons: { [key: string]: string } = {
       'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16,11 18,13 22,9"></polyline>',
       'search': '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>',
@@ -93,6 +95,6 @@ export class LandingComponent {
       'shield': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>',
       'headphones': '<path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>'
     };
-    return icons[iconName] || '';
+    return this.sanitizer.bypassSecurityTrustHtml(icons[iconName] || '');
   }
 }
