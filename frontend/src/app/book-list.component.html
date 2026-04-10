@@ -247,8 +247,29 @@
         </div>
       </div>
 
+      <!-- Error State -->
+      <div *ngIf="error() && !loading()" class="error-state">
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h3>Failed to load books</h3>
+        <p>{{ error() }}</p>
+        <button (click)="fetchBooks()" class="btn btn-primary">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          Retry Loading
+        </button>
+      </div>
+
       <!-- Empty State -->
-      <div *ngIf="books().length === 0 && !loading()" class="empty-state">
+      <div *ngIf="books().length === 0 && !loading() && !error()" class="empty-state">
         <div class="empty-illustration">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>

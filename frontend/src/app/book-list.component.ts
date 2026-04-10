@@ -22,6 +22,7 @@ export class BookListComponent implements OnInit {
   page = signal(1);
   limit = signal(10);
   loading = signal(false);
+  error = signal<string | null>(null);
   viewMode = signal<'grid' | 'list'>('grid');
   showDeleteModal = signal(false);
   bookToDelete = signal<Book | null>(null);
@@ -47,6 +48,7 @@ export class BookListComponent implements OnInit {
 
   fetchBooks() {
     this.loading.set(true);
+    this.error.set(null);
     this.bookService.getBooks(this.page(), this.limit()).subscribe({
       next: (res: any) => {
         this.books.set(res.books);
@@ -54,7 +56,9 @@ export class BookListComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.notificationService.error(err.error?.error || 'Failed to load books.');
+        const errorMsg = err.error?.error || 'Failed to load books.';
+        this.error.set(errorMsg);
+        this.notificationService.error(errorMsg);
         this.loading.set(false);
       }
     });
