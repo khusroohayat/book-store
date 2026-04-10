@@ -71,7 +71,7 @@
               <input 
                 id="title"
                 name="title" 
-                [(ngModel)]="book.title" 
+                [(ngModel)]="book().title" 
                 required 
                 class="form-control"
                 placeholder="Enter the complete book title"
@@ -98,7 +98,7 @@
               <input 
                 id="author"
                 name="author" 
-                [(ngModel)]="book.author" 
+                [(ngModel)]="book().author" 
                 required 
                 class="form-control"
                 placeholder="Enter the author's full name"
@@ -126,7 +126,8 @@
             <input 
               id="genres"
               name="genres" 
-              [(ngModel)]="genresInput" 
+              [ngModel]="genresInput()" 
+              (ngModelChange)="genresInput.set($event)"
               required 
               class="form-control"
               placeholder="e.g., Fiction, Mystery, Thriller, Romance"
@@ -182,7 +183,7 @@
                 id="pages"
                 name="pages" 
                 type="number" 
-                [(ngModel)]="book.pages" 
+                [(ngModel)]="book().pages" 
                 required 
                 min="1"
                 max="10000"
@@ -211,7 +212,7 @@
                 <select 
                   id="rating"
                   name="rating" 
-                  [(ngModel)]="book.rating" 
+                  [(ngModel)]="book().rating" 
                   required 
                   class="form-control"
                   #ratingInput="ngModel">
@@ -259,7 +260,8 @@
             <textarea 
               id="reviews"
               name="reviews" 
-              [(ngModel)]="reviewsInput"
+              [ngModel]="reviewsInput()"
+              (ngModelChange)="reviewsInput.set($event)"
               class="form-control"
               rows="6"
               placeholder="Enter reviews in the following format:&#10;&#10;John Doe: This book was absolutely fantastic! The characters were well-developed and the plot kept me engaged throughout.&#10;&#10;Jane Smith: A compelling read with beautiful prose. Highly recommend for anyone who enjoys literary fiction.&#10;&#10;Mike Johnson: Great storytelling and excellent pacing. One of the best books I've read this year."></textarea>
@@ -284,12 +286,12 @@
             </svg>
             Cancel
           </a>
-          <button type="submit" [disabled]="bookForm.invalid || isSubmitting" class="btn btn-primary btn-lg">
-            <span *ngIf="isSubmitting" class="loading-content">
+          <button type="submit" [disabled]="bookForm.invalid || isSubmitting()" class="btn btn-primary btn-lg">
+            <span *ngIf="isSubmitting()" class="loading-content">
               <div class="loading-spinner"></div>
               Adding Book...
             </span>
-            <span *ngIf="!isSubmitting" class="normal-content">
+            <span *ngIf="!isSubmitting()" class="normal-content">
               <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                 <polyline points="17,21 17,13 7,13 7,21"></polyline>
@@ -298,33 +300,6 @@
               Add Book to Inventory
             </span>
           </button>
-        </div>
-      </div>
-
-      <!-- Messages -->
-      <div *ngIf="error" class="alert alert-error">
-        <div class="alert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-        </div>
-        <div class="alert-content">
-          <strong>Error occurred</strong>
-          <p>{{ error }}</p>
-        </div>
-      </div>
-
-      <div *ngIf="success" class="alert alert-success">
-        <div class="alert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20,6 9,17 4,12"></polyline>
-          </svg>
-        </div>
-        <div class="alert-content">
-          <strong>Success!</strong>
-          <p>{{ success }}</p>
         </div>
       </div>
     </form>

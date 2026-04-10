@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BookService, Book } from './book.service';
 import { Router } from '@angular/router';
+import { NotificationService } from './notification.service';
 
 @Component({
   selector: 'add-book',
@@ -11,47 +12,56 @@ import { Router } from '@angular/router';
   templateUrl: './add-book.component.html',
   styleUrls: ['./add-book.component.css']
 })
-
 export class AddBookComponent {
-  book: Book = { title: '', author: '', genres: [], pages: undefined as any, rating: undefined as any, reviews: [] };
-  genresInput = '';
-  reviewsInput = '';
-  error = '';
-  success = '';
-  isSubmitting = false;
+  private bookService = inject(BookService);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
-  constructor(private bookService: BookService, private router: Router) {}
+  book = signal<Book>({ 
+    title: '', 
+    author: '', 
+    genres: [], 
+    pages: undefined as any, 
+    rating: undefined as any, 
+    reviews: [] 
+  });
+  
+  genresInput = signal('');
+  reviewsInput = signal('');
+  isSubmitting = signal(false);
 
   addBook() {
-    if (this.isSubmitting) return;
-    this.isSubmitting = true;
-    this.error = '';
-    this.success = '';
-    this.book.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
-    this.book.reviews = this.reviewsInput
-      ? this.reviewsInput.split('\n').map(line => {
+    if (this.isSubmitting()) return;
+    this.isSubmitting.set(true);
+
+    const currentBook = { ...this.book() };
+    
+    currentBook.genres = this.genresInput().split(',').map(g => g.trim()).filter(Boolean);
+    currentBook.reviews = this.reviewsInput()
+      ? this.reviewsInput().split('\n').map(line => {
           const [name, ...body] = line.split(':');
           return { name: name.trim(), body: body.join(':').trim() };
         }).filter(r => r.name && r.body)
       : [];
-    if (!this.book.reviews.length) {
-      this.error = 'At least one review is required.';
-      this.isSubmitting = false;
+
+    if (!currentBook.reviews.length) {
+      this.notificationService.error('At least one review is required.');
+      this.isSubmitting.set(false);
       return;
     }
-    this.bookService.addBook(this.book).subscribe({
+
+    this.bookService.addBook(currentBook).subscribe({
       next: () => {
-        this.success = 'Book added!';
-        this.isSubmitting = false;
-        setTimeout(() => this.router.navigate(['/books']), 1000);
+        this.notificationService.success('Book added successfully!');
+        this.isSubmitting.set(false);
+        this.router.navigate(['/books']);
       },
       error: err => {
-        if (err.status === 403) {
-          this.error = 'You are not authorized to add a book.';
-        } else {
-          this.error = err.error?.error || 'Failed to add book.';
-        }
-        this.isSubmitting = false;
+        const msg = err.status === 403 
+          ? 'You are not authorized to add a book.' 
+          : (err.error?.error || 'Failed to add book.');
+        this.notificationService.error(msg);
+        this.isSubmitting.set(false);
       }
     });
   }

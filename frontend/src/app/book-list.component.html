@@ -18,7 +18,7 @@
   </div>
 
   <!-- Stats Dashboard -->
-  <div class="stats-section" *ngIf="books.length > 0">
+  <div class="stats-section" *ngIf="books().length > 0">
     <div class="container">
       <div class="stats-grid">
         <div class="stat-card primary">
@@ -29,11 +29,11 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ total }}</div>
+            <div class="stat-number">{{ total() }}</div>
             <div class="stat-label">Total Books</div>
           </div>
-  </div>
-        
+        </div>
+
         <div class="stat-card success">
           <div class="stat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -41,11 +41,11 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ getAverageRating() | number:'1.1-1' }}</div>
+            <div class="stat-number">{{ averageRating() | number:'1.1-1' }}</div>
             <div class="stat-label">Average Rating</div>
           </div>
         </div>
-        
+
         <div class="stat-card info">
           <div class="stat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -57,11 +57,11 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ getTotalPagesCount() | number }}</div>
+            <div class="stat-number">{{ totalBooksPages() | number }}</div>
             <div class="stat-label">Total Pages</div>
           </div>
         </div>
-        
+
         <div class="stat-card warning">
           <div class="stat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,7 +70,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ getUniqueGenres() }}</div>
+            <div class="stat-number">{{ uniqueGenresCount() }}</div>
             <div class="stat-label">Unique Genres</div>
           </div>
         </div>
@@ -82,7 +82,7 @@
   <div class="main-content">
     <div class="container">
       <!-- Section Header -->
-      <div class="section-header" *ngIf="books.length > 0">
+      <div class="section-header" *ngIf="books().length > 0">
         <div class="section-title">
           <h2>Your Book Collection</h2>
           <p class="section-subtitle">Manage and organize your inventory</p>
@@ -91,7 +91,7 @@
           <div class="view-toggle">
             <button 
               class="toggle-btn" 
-              [class.active]="viewMode === 'grid'"
+              [class.active]="viewMode() === 'grid'"
               (click)="setViewMode('grid')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -102,7 +102,7 @@
             </button>
             <button 
               class="toggle-btn" 
-              [class.active]="viewMode === 'list'"
+              [class.active]="viewMode() === 'list'"
               (click)="setViewMode('list')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -118,28 +118,14 @@
       </div>
 
       <!-- Loading State -->
-      <div *ngIf="loading" class="loading-state">
+      <div *ngIf="loading()" class="loading-state">
         <div class="loading-spinner"></div>
         <p>Loading your book collection...</p>
       </div>
 
-      <!-- Error State -->
-      <div *ngIf="error && !loading" class="error-state">
-        <a routerLink="/books" class="breadcrumb-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-        </a>
-        <h3>Something went wrong</h3>
-        <p>{{ error }}</p>
-        <button (click)="fetchBooks()" class="btn btn-primary">Try Again</button>
-      </div>
-
       <!-- Books Grid View -->
-      <div *ngIf="books.length > 0 && !loading && viewMode === 'grid'" class="books-grid">
-        <div *ngFor="let book of books; trackBy: trackByBookId" class="book-card">
+      <div *ngIf="books().length > 0 && !loading() && viewMode() === 'grid'" class="books-grid">
+        <div *ngFor="let book of books(); trackBy: trackByBookId" class="book-card">
           <div class="book-card-header">
             <div class="book-rating">
               <span class="rating-stars">{{ getStars(book.rating) }}</span>
@@ -194,7 +180,7 @@
       </div>
 
       <!-- Books List View -->
-      <div *ngIf="books.length > 0 && !loading && viewMode === 'list'" class="books-table-container">
+      <div *ngIf="books().length > 0 && !loading() && viewMode() === 'list'" class="books-table-container">
         <div class="table-wrapper">
           <table class="books-table">
             <thead>
@@ -208,7 +194,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let book of books; trackBy: trackByBookId" class="book-row">
+              <tr *ngFor="let book of books(); trackBy: trackByBookId" class="book-row">
                 <td class="book-details">
                   <div class="book-info">
                     <h4 class="book-title">{{ book.title }}</h4>
@@ -249,7 +235,7 @@
                     <button (click)="deleteBook(book)" class="btn btn-sm btn-danger">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3,6 5,6 21,6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                       </svg>
                       Delete
                     </button>
@@ -261,8 +247,29 @@
         </div>
       </div>
 
+      <!-- Error State -->
+      <div *ngIf="error() && !loading()" class="error-state">
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h3>Failed to load books</h3>
+        <p>{{ error() }}</p>
+        <button (click)="fetchBooks()" class="btn btn-primary">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          Retry Loading
+        </button>
+      </div>
+
       <!-- Empty State -->
-      <div *ngIf="books.length === 0 && !loading && !error" class="empty-state">
+      <div *ngIf="books().length === 0 && !loading() && !error()" class="empty-state">
         <div class="empty-illustration">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -282,11 +289,11 @@
       </div>
 
       <!-- Pagination -->
-      <div *ngIf="books.length > 0 && getTotalPages() > 1" class="pagination-container">
+      <div *ngIf="books().length > 0 && totalPages() > 1" class="pagination-container">
         <div class="pagination">
           <button 
             (click)="prevPage()" 
-            [disabled]="page === 1" 
+            [disabled]="page() === 1" 
             class="pagination-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="15,18 9,12 15,6"></polyline>
@@ -295,14 +302,14 @@
           </button>
           
           <div class="pagination-info">
-            <span class="current-page">{{ page }}</span>
+            <span class="current-page">{{ page() }}</span>
             <span class="separator">of</span>
-            <span class="total-pages">{{ getTotalPages() }}</span>
+            <span class="total-pages">{{ totalPages() }}</span>
           </div>
           
           <button 
             (click)="nextPage()" 
-            [disabled]="page * limit >= total" 
+            [disabled]="page() >= totalPages()" 
             class="pagination-btn">
             Next
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -312,8 +319,46 @@
         </div>
         
         <div class="results-info">
-          Showing {{ (page - 1) * limit + 1 }} to {{ Math.min(page * limit, total) }} of {{ total }} books
+          Showing {{ (page() - 1) * limit() + 1 }} to {{ Math.min(page() * limit(), total()) }} of {{ total() }} books
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal()" (click)="closeDeleteModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Confirm Delete
+        </div>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong>"{{ bookToDelete()?.title }}"</strong>?</p>
+        <p class="warning-text">This action is permanent and cannot be undone.</p>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3,6 5,6 21,6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Delete Book
+        </button>
       </div>
     </div>
   </div>
