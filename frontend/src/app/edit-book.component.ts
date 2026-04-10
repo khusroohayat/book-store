@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookService, Book } from './book.service';
+import { NotificationService } from './notification.service';
 
 @Component({
   selector: 'edit-book',
@@ -12,73 +13,72 @@ import { BookService, Book } from './book.service';
   styleUrls: ['./edit-book.component.css']
 })
 export class EditBookComponent implements OnInit {
-  book: Book | null = null;
+  private route = inject(ActivatedRoute);
+  private bookService = inject(BookService);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
+
+  book = signal<Book | null>(null);
+  error = signal<string | null>(null);
   genresInput = '';
   reviewsInput = '';
-  error = '';
-  success = '';
   isSubmitting = false;
-
-  constructor(
-    private route: ActivatedRoute,
-    private bookService: BookService,
-    private router: Router
-  ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.bookService.getBook(id).subscribe({
         next: b => {
-          // Ensure pages and rating are numbers or empty for form binding
-          this.book = {
+          this.book.set({
             ...b,
             pages: b.pages ?? undefined,
             rating: b.rating ?? undefined
-          };
+          });
           this.genresInput = b.genres.join(', ');
           this.reviewsInput = Array.isArray(b.reviews)
             ? b.reviews.map(r => `${r.name}: ${r.body}`).join('\n')
             : '';
         },
-        error: err => this.error = err.error?.error || 'Book not found.'
+        error: err => {
+          this.error.set(err.error?.error || 'Book not found.');
+          this.notificationService.error(this.error()!);
+        }
       });
     }
   }
 
   updateBook() {
-    if (!this.book || !this.book._id) return;
-    
+    const bookData = this.book();
+    if (!bookData || !bookData._id) return;
     if (this.isSubmitting) return;
     
     this.isSubmitting = true;
-    this.error = '';
-    this.success = '';
     
-    this.book.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
-    this.book.reviews = this.reviewsInput
+    bookData.genres = this.genresInput.split(',').map(g => g.trim()).filter(Boolean);
+    bookData.reviews = this.reviewsInput
       ? this.reviewsInput.split('\n').map(line => {
           const [name, ...body] = line.split(':');
           return { name: name.trim(), body: body.join(':').trim() };
         }).filter(r => r.name && r.body)
       : [];
-    if (!this.book.reviews.length) {
-      this.error = 'At least one review is required.';
+
+    if (!bookData.reviews.length) {
+      this.notificationService.error('At least one review is required.');
       this.isSubmitting = false;
       return;
     }
-    this.bookService.updateBook(this.book._id, this.book).subscribe({
+
+    this.bookService.updateBook(bookData._id, bookData).subscribe({
       next: () => {
-        this.success = 'Book updated!';
+        this.notificationService.success('Book updated successfully!');
         this.isSubmitting = false;
-        setTimeout(() => this.router.navigate(['/books']), 1000);
+        this.router.navigate(['/books']);
       },
       error: err => {
-        if (err.status === 403) {
-          this.error = 'You are not authorized to update this book.';
-        } else {
-          this.error = err.error?.error || 'Failed to update book.';
-        }
+        const msg = err.status === 403 
+          ? 'You are not authorized to update this book.' 
+          : (err.error?.error || 'Failed to update book.');
+        this.notificationService.error(msg);
         this.isSubmitting = false;
       }
     });

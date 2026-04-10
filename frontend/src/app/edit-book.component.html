@@ -16,12 +16,12 @@
         <span class="breadcrumb-current">Edit Book</span>
       </div>
       <h1 class="page-title">Edit Book Details</h1>
-      <p class="page-subtitle" *ngIf="book">Update information for "{{ book.title }}"</p>
+      <p class="page-subtitle" *ngIf="book()">Update information for "{{ book()?.title }}"</p>
     </div>
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="!book && !error" class="loading-container">
+  <div *ngIf="!book() && !error()" class="loading-container">
     <div class="loading-state">
       <div class="loading-spinner"></div>
       <p>Loading book details...</p>
@@ -29,7 +29,7 @@
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error && !book" class="error-container">
+  <div *ngIf="error() && !book()" class="error-container">
     <div class="error-state">
       <div class="error-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -39,7 +39,7 @@
         </svg>
       </div>
       <h3>Book Not Found</h3>
-      <p>{{ error }}</p>
+      <p>{{ error() }}</p>
       <a routerLink="/books" class="btn btn-primary">
         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="15,18 9,12 15,6"></polyline>
@@ -50,7 +50,7 @@
   </div>
 
   <!-- Form Container -->
-  <div *ngIf="book" class="form-container">
+  <div *ngIf="book() as bookData" class="form-container">
     <form (ngSubmit)="updateBook()" #bookForm="ngForm" class="book-form">
       <!-- Form Content -->
       <div class="form-content">
@@ -82,7 +82,7 @@
               <input 
                 id="title"
                 name="title" 
-                [(ngModel)]="book.title" 
+                [(ngModel)]="bookData.title" 
                 required 
                 class="form-control"
                 placeholder="Enter the complete book title"
@@ -109,7 +109,7 @@
               <input 
                 id="author"
                 name="author" 
-                [(ngModel)]="book.author" 
+                [(ngModel)]="bookData.author" 
                 required 
                 class="form-control"
                 placeholder="Enter the author's full name"
@@ -193,7 +193,7 @@
                 id="pages"
                 name="pages" 
                 type="number" 
-                [(ngModel)]="book.pages" 
+                [(ngModel)]="bookData.pages" 
                 required 
                 min="1"
                 max="10000"
@@ -221,7 +221,7 @@
               <select 
                 id="rating"
                 name="rating" 
-                [(ngModel)]="book.rating" 
+                [(ngModel)]="bookData.rating" 
                 required 
                 class="form-control"
                 #ratingInput="ngModel">
@@ -307,33 +307,6 @@
               Update Book Details
             </span>
           </button>
-        </div>
-      </div>
-
-      <!-- Messages -->
-      <div *ngIf="error" class="alert alert-error">
-        <div class="alert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-        </div>
-        <div class="alert-content">
-          <strong>Error occurred</strong>
-          <p>{{ error }}</p>
-        </div>
-      </div>
-
-      <div *ngIf="success" class="alert alert-success">
-        <div class="alert-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20,6 9,17 4,12"></polyline>
-          </svg>
-        </div>
-        <div class="alert-content">
-          <strong>Success!</strong>
-          <p>{{ success }}</p>
         </div>
       </div>
     </form>

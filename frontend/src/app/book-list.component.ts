@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BookService, Book } from './book.service';
 import { Router } from '@angular/router';
+import { NotificationService } from './notification.service';
 
 @Component({
   selector: 'book-list',
@@ -12,47 +13,63 @@ import { Router } from '@angular/router';
   styleUrls: ['./book-list.component.css']
 })
 export class BookListComponent implements OnInit {
-  books: Book[] = [];
-  total = 0;
-  page = 1;
-  limit = 10;
-  loading = false;
-  error = '';
-  viewMode: 'grid' | 'list' = 'grid';
+  private bookService = inject(BookService);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
+
+  books = signal<Book[]>([]);
+  total = signal(0);
+  page = signal(1);
+  limit = signal(10);
+  loading = signal(false);
+  viewMode = signal<'grid' | 'list'>('grid');
+  showDeleteModal = signal(false);
+  bookToDelete = signal<Book | null>(null);
   Math = Math;
 
-  constructor(private bookService: BookService, private router: Router) {}
+  totalPages = computed(() => Math.ceil(this.total() / this.limit()));
+  averageRating = computed(() => {
+    const b = this.books();
+    if (b.length === 0) return 0;
+    return b.reduce((acc, book) => acc + book.rating, 0) / b.length;
+  });
+  uniqueGenresCount = computed(() => {
+    const allGenres = this.books().flatMap(book => book.genres);
+    return new Set(allGenres).size;
+  });
+  totalBooksPages = computed(() => {
+    return this.books().reduce((total, book) => total + (book.pages || 0), 0);
+  });
 
   ngOnInit() {
     this.fetchBooks();
   }
 
   fetchBooks() {
-    this.loading = true;
-    this.error = '';
-    this.bookService.getBooks(this.page, this.limit).subscribe({
+    this.loading.set(true);
+    this.bookService.getBooks(this.page(), this.limit()).subscribe({
       next: (res: any) => {
-        this.books = res.books;
-        this.total = res.total;
-        this.loading = false;
+        this.books.set(res.books);
+        this.total.set(res.total);
+        this.loading.set(false);
       },
       error: err => {
-        this.error = err.error?.error || 'Failed to load books.';
-        this.loading = false;
+        this.notificationService.error(err.error?.error || 'Failed to load books.');
+        this.loading.set(false);
       }
     });
   }
 
   nextPage() {
-    if (this.page * this.limit < this.total) {
-      this.page++;
+    if (this.page() < this.totalPages()) {
+      this.page.update(p => p + 1);
       this.fetchBooks();
     }
   }
 
   prevPage() {
-    if (this.page > 1) {
-      this.page--;
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
       this.fetchBooks();
     }
   }
@@ -62,30 +79,33 @@ export class BookListComponent implements OnInit {
   }
 
   deleteBook(book: Book) {
-    if (confirm(`Are you sure you want to delete "${book.title}"?\n\nThis action cannot be undone.`)) {
-      this.bookService.deleteBook(book._id!).subscribe({
-        next: () => {
-          this.fetchBooks();
-          // Show success message briefly
-          const originalError = this.error;
-          this.error = '';
-          setTimeout(() => {
-            if (!originalError) {
-              // Only show success if there wasn't already an error
-              this.showTemporaryMessage('Book deleted successfully!', 'success');
-            }
-          }, 100);
-        },
-        error: err => {
-          if (err.status === 403) {
-            this.error = 'You are not authorized to delete this book.';
-            this.showTemporaryMessage('You are not authorized to delete this book.', 'error');
-          } else {
-            this.error = err.error?.error || 'Failed to delete book.';
-          }
-        }
-      });
-    }
+    this.bookToDelete.set(book);
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.bookToDelete.set(null);
+  }
+
+  confirmDelete() {
+    const book = this.bookToDelete();
+    if (!book || !book._id) return;
+
+    this.bookService.deleteBook(book._id).subscribe({
+      next: () => {
+        this.fetchBooks();
+        this.notificationService.success(`"${book.title}" deleted successfully!`);
+        this.closeDeleteModal();
+      },
+      error: err => {
+        const msg = err.status === 403 
+          ? 'You are not authorized to delete this book.' 
+          : (err.error?.error || 'Failed to delete book.');
+        this.notificationService.error(msg);
+        this.closeDeleteModal();
+      }
+    });
   }
 
   trackByBookId(index: number, book: Book): string {
@@ -102,44 +122,7 @@ export class BookListComponent implements OnInit {
     return stars;
   }
 
-  getAverageRating(): number {
-    if (this.books.length === 0) return 0;
-    const sum = this.books.reduce((acc, book) => acc + book.rating, 0);
-    return sum / this.books.length;
-  }
-
-  getTotalPages(): number {
-    return Math.ceil(this.total / this.limit);
-  }
-
-  getUniqueGenres(): number {
-    const allGenres = this.books.flatMap(book => book.genres);
-    return new Set(allGenres).size;
-  }
-
-  getTotalPagesCount(): number {
-    return this.books.reduce((total, book) => total + (book.pages || 0), 0);
-  }
-
   setViewMode(mode: 'grid' | 'list') {
-    this.viewMode = mode;
-  }
-
-  private showTemporaryMessage(message: string, type: 'success' | 'error') {
-    // This is a simple implementation - in a real app you might use a toast service
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
-    alertDiv.textContent = message;
-    alertDiv.style.position = 'fixed';
-    alertDiv.style.top = '20px';
-    alertDiv.style.right = '20px';
-    alertDiv.style.zIndex = '1000';
-    alertDiv.style.minWidth = '300px';
-    
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-      alertDiv.remove();
-    }, 3000);
+    this.viewMode.set(mode);
   }
 }

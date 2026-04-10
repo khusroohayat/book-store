@@ -3,6 +3,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { AuthService } from './auth.service';
+
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -11,7 +13,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent {
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer, public auth: AuthService) {}
   features = [
     {
       icon: 'user-check',

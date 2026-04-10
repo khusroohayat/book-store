@@ -35,12 +35,19 @@
         </p>
         
         <div class="hero-actions">
-          <a routerLink="/books" class="btn btn-primary btn-hero">
+          <a *ngIf="auth.hasToken()" routerLink="/books" class="btn btn-primary btn-hero">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
               <polyline points="9,22 9,12 15,12 15,22"></polyline>
             </svg>
             Access Inventory
+          </a>
+          <a *ngIf="!auth.hasToken()" routerLink="/register" class="btn btn-primary btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M6 20v-2a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v2"></path>
+            </svg>
+            Get Started Now
           </a>
           <button (click)="scrollToFeatures()" class="btn btn-secondary btn-hero">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -236,19 +243,25 @@
           with BookStore Pro. Start organizing your collection today.
         </p>
         <div class="cta-actions">
-          <a routerLink="/books" class="btn btn-primary btn-hero">
+          <a *ngIf="auth.hasToken()" routerLink="/books" class="btn btn-primary btn-hero">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9,22 9,12 15,12 15,22"></polyline>
+            </svg>
+            Open My Inventory
+          </a>
+          <a *ngIf="!auth.hasToken()" routerLink="/login" class="btn btn-primary btn-hero">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-6-4l4-4-4-4m-8 8h16"></path>
             </svg>
-            Get Started Now
+            Login to Account
           </a>
-          <a routerLink="/add" class="btn btn-outline btn-hero">
+          <a *ngIf="!auth.hasToken()" routerLink="/register" class="btn btn-outline btn-hero">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="16"></line>
-              <line x1="8" y1="12" x2="16" y2="12"></line>
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M6 20v-2a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v2"></path>
             </svg>
-            Add Your First Book
+            Create New Account
           </a>
         </div>
       </div>

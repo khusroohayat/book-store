@@ -355,7 +355,6 @@
     max-width: 220px;
     flex: 0 0 220px;
   }
-}
 
 .stat-item:nth-child(1) { animation-delay: 0s; }
 .stat-item:nth-child(2) { animation-delay: 0.5s; }
